@@ -1,0 +1,52 @@
+alias: EPaper Tags - API Ninjas - Dad Jokes
+description: "Show a (not)funny 'dad' joke, every hour!"
+trigger:
+  - platform: time_pattern
+    minutes: "7"
+action:
+  - service: open_epaper_link.drawcustom
+    data:
+      background: white
+      rotate: 0
+      payload:
+        - type: icon
+          value: emoticon-lol
+          x: 1
+          "y": 1
+          size: 35
+          color: red
+        - type: icon
+          value: emoticon-confused
+          x: 260
+          "y": 92
+          size: 35
+          color: red
+        - type: text
+          value: "{{state_attr('sensor.api_ninja_dad_jokes','joke') | string }}"
+          font: ../../media/GothamRnd-Bold.ttf
+          x: 32
+          "y": 32
+          size: >-
+            {% set string_len = state_attr('sensor.api_ninja_dad_jokes','joke')
+            | length | int %} {% if string_len <= 50 %}
+              26
+            {% elif string_len <= 60 %}
+              20
+            {% elif string_len <= 100 %}
+              18
+            {% elif string_len <= 150 %}
+              15  
+            {% elif string_len <= 200 %}
+              14
+            {% else %} 
+              12
+            {% endif %}
+          color: black
+          anchor: lt
+          max_width: 232
+          y_padding: 0
+          spacing: 2
+    target:
+      entity_id:
+        - open_epaper_link.000002123456ABC
+mode: restart
