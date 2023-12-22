@@ -1,0 +1,71 @@
+alias: EPaper Tags - API Ninjas - Chunk Norris
+description: "Show an awesome Chunk Norris quote, joke, fact (mostly true!), every hour!"
+trigger:
+  - platform: time_pattern
+    minutes: "8"
+action:
+  - service: open_epaper_link.drawcustom
+    data:
+      background: white
+      rotate: 0
+      payload:
+        - type: icon
+          value: comment-quote
+          x: 1
+          "y": 1
+          size: 35
+          color: red
+        - type: text
+          value: Chuck Norris
+          font: ../../media/GothamRnd-Bold.ttf
+          x: 38
+          "y": 2
+          size: 32
+          color: red
+          anchor: lt
+          max_width: 246
+          y_padding: 0
+          spacing: 2
+        - type: icon
+          value: emoticon-confused
+          x: 260
+          "y": 92
+          size: 35
+          color: red
+        - type: dlimg
+          url: https://YOUR_HA_HOSTNAME_OR_IP/local/chuck-icon.jpg
+          x: 246
+          "y": 78
+          xsize: 50
+          ysize: 50
+          rotate: 0
+        - type: text
+          value: "{{state_attr('sensor.api_ninja_chuck_norris','joke') | string }}"
+          font: ../../media/GothamRnd-Bold.ttf
+          x: 5
+          "y": 38
+          size: >-
+            {% set string_len =
+            state_attr('sensor.api_ninja_chuck_norris','joke') | length | int %}
+            {% if string_len <= 50 %}
+              28
+            {% elif string_len <= 60 %}
+              22
+            {% elif string_len <= 100 %}
+              20
+            {% elif string_len <= 150 %}
+              16  
+            {% elif string_len <= 200 %}
+              15
+            {% else %} 
+              11
+            {% endif %}
+          color: black
+          anchor: lt
+          max_width: 246
+          y_padding: 0
+          spacing: 1
+    target:
+      entity_id:
+        - open_epaper_link.000002123456ABC
+mode: restart
