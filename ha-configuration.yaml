@@ -1,0 +1,37 @@
+rest:
+  - authentication: basic
+    scan_interval: 3600
+    resource: https://api.api-ninjas.com/v1/dadjokes/
+#   resource: https://api.api-ninjas.com/v1/jokes/ #Normal jokes
+    method: GET
+    headers:
+        X-Api-Key: 'YOUR_SECRET_KEY_FROM_API_NINJAS'
+    sensor:
+      - name: "API Ninja - Dad Jokes"
+        value_template: "OK"
+        json_attributes:
+          - "joke"          
+  - authentication: basic
+    scan_interval: 3600
+    resource: https://api.api-ninjas.com/v1/chucknorris
+    method: GET
+    headers:
+        X-Api-Key: 'YOUR_SECRET_KEY_FROM_API_NINJAS'
+    sensor:
+      - name: "API Ninja - Chuck Norris"
+        value_template: "OK"
+        json_attributes:
+          - "joke"          
+  - authentication: basic
+    scan_interval: 3600
+    resource: https://api.api-ninjas.com/v1/trivia
+    method: GET
+    headers:
+        X-Api-Key: 'YOUR_SECRET_KEY_FROM_API_NINJAS'
+    sensor:
+      - name: "API Ninja - Trivia"
+        value_template: "OK"
+        json_attributes:
+          - "category"   
+          - "question"   
+          - "answer"   
