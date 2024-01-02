@@ -17,7 +17,7 @@ Show a (not)funny 'dad' joke, every hour!
 
 <img src="images/api-ninjas-trivia.jpg" width="50%" alt="Epaper Tag">
 
-Show a trivia question every hour, with the answer only being revealed after 30 minutes! The answer only reveals on the second half hour of every question.... you have 30 minutes to guess on the hour before the tag updates! (Bunsen Burner btw!)
+Show a trivia question every hour, with the answer only being revealed after 30 minutes! The answer only reveals on the second half hour of every question.... you have 30 minutes to guess on the hour before the tag updates! (Bunsen Burner, by the way!)
 
 ## Sensors/Integrations needed:
 
