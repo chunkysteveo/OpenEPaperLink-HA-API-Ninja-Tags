@@ -30,7 +30,7 @@ You can run all three, these are just three examples from API Ninja, of which th
 
 ## Installation
 * Add font `GothamRnd-Bold.ttf` to `/config/media` Home Assistant (create the folder "media" too if it's not there.).
-* Add `chuck-icon.jpg` to your `/www` folder. This will allow it to be visible to the automation to download the image for the Chuck Norris tag - replace `url: https://YOUR_HA_HOSTNAME_OR_IP/local/chuck-icon.jpg` in the chuck-norris automation with your Home Assistant host name or IP URL.
+* Add `chuck-icon.jpg` to your `/media` folder. This will allow it to be visible to the automation to download the image for the Chuck Norris tag.
 * Add rest sensor `ha-configuration.yaml` to your configuration file in Home Assistant.
 * Add contents of `automation-2.9-dad-jokes.yaml`, `automation-2.9-chuck-norris.yaml`, `automation-2.9-trivia.yaml`, to a new automation in Home Assistant (Choose "Edit in Yaml" from top right three dots in a new automation).
 
