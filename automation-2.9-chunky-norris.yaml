@@ -33,7 +33,7 @@ action:
           size: 35
           color: red
         - type: dlimg
-          url: https://YOUR_HA_HOSTNAME_OR_IP/local/chuck-icon.jpg
+          url: '../../media/chuck-icon.jpg'
           x: 246
           "y": 78
           xsize: 50
