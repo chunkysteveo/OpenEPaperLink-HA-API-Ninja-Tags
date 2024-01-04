@@ -33,7 +33,7 @@ action:
           size: 35
           color: red
         - type: dlimg
-          url: '../../media/chuck-icon.jpg'
+          url: /config/media/chuck-icon.jpg
           x: 246
           "y": 78
           xsize: 50
