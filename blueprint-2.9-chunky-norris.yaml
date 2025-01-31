@@ -1,0 +1,123 @@
+blueprint:
+  name: API Ninja Tags - Chuck Norris
+  description: >
+    Show an awesome Chunk Norris quote, joke, fact (mostly true!), every hour!
+
+    ### Requirements:
+
+    - The [OpenEpaperLink HA Integration](https://github.com/OpenEPaperLink/Home_Assistant_Integration).
+
+    - An [API Ninjas API Key](https://api-ninjas.com/register). it's free!
+
+    ### Installation:
+
+    - Add the [rest sensor](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/blob/main/ha-configuration.yaml) to your home assistant configuration file and replace `'YOUR_SECRET_KEY_FROM_API_NINJAS'` with your API key (or set it in your secrets file)
+
+    - Reload HA.
+
+    - Select the tag(s) you want to display the quotes on.
+
+    ### Customizing:
+
+    - For a nicer font add [`GothamRnd-Bold.ttf`](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/raw/refs/heads/main/GothamRnd-Bold.ttf) and set the path in the optional font file field.
+
+    - By default this automation triggers on the 8th minute of every hour, to change this modify the optional time pattern field.
+
+  domain: automation
+  input:
+    displays:
+      name: E-Paper Displays
+      description: One or more ESLs
+      selector:
+        device:
+          filter:
+            - integration: open_epaper_link
+    optional:
+      name: Optional
+      icon: "mdi:cog"
+      collapsed: true
+      input:
+        font_file:
+          name: Font file
+          description: Font file with path
+          default: ppb.ttf
+          selector:
+            text: {}
+        time_pattern:
+          name: Time Pattern
+          description: When to trigger this automation
+          default: "8"
+          selector:
+            text: {}
+
+trigger:
+  - trigger: time_pattern
+    minutes: !input time_pattern
+
+variables:
+  font_file: !input font_file
+
+action:
+  - action: open_epaper_link.drawcustom
+    alias: Draw Chuck Norris Quote
+    target:
+      device_id: !input displays
+    data:
+      background: white
+      rotate: 0
+      payload:
+        - type: icon
+          value: comment-quote
+          x: 1
+          y: 1
+          size: 35
+          color: red
+        - type: text
+          value: "Chuck Norris"
+          font: "{{ font_file }}"
+          x: 38
+          y: 2
+          size: 32
+          color: red
+          anchor: lt
+          max_width: 246
+          y_padding: 0
+          spacing: 2
+        - type: icon
+          value: emoticon-confused
+          x: 260
+          y: 92
+          size: 35
+          color: red
+        - type: dlimg
+          url: "https://raw.githubusercontent.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/refs/heads/main/chuck-icon.jpg"
+          x: 246
+          y: 78
+          xsize: 50
+          ysize: 50
+          rotate: 0
+        - type: text
+          value: "{{ state_attr('sensor.api_ninja_chuck_norris', 'joke') | string }}"
+          font: "{{ font_file }}"
+          x: 5
+          y: 38
+          size: >-
+            {% set string_len = state_attr('sensor.api_ninja_chuck_norris', 'joke') | length | int %}
+            {% if string_len <= 50 %}
+              28
+            {% elif string_len <= 60 %}
+              22
+            {% elif string_len <= 100 %}
+              20
+            {% elif string_len <= 150 %}
+              16
+            {% elif string_len <= 200 %}
+              15
+            {% else %}
+              11
+            {% endif %}
+          color: black
+          # anchor: lt
+          max_width: 246
+          y_padding: 0
+          spacing: 1

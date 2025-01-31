@@ -1,0 +1,105 @@
+blueprint:
+  name: API Ninja Tags - Dad Jokes
+  description: >
+    Show a (not)funny 'dad' joke, every hour!
+
+    ### Requirements:
+
+    - The [OpenEpaperLink HA Integration](https://github.com/OpenEPaperLink/Home_Assistant_Integration).
+
+    - An [API Ninjas API Key](https://api-ninjas.com/register). it's free!
+
+    ### Installation:
+
+    - Add the [rest sensor](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/blob/main/ha-configuration.yaml) to your home assistant configuration file and replace `'YOUR_SECRET_KEY_FROM_API_NINJAS'` with your API key (or set it in your secrets file)
+
+    - Reload HA.
+
+    - Select the tag(s) you want to display the jokes on.
+
+    ### Customizing:
+
+    - For a nicer font add [`GothamRnd-Bold.ttf`](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/raw/refs/heads/main/GothamRnd-Bold.ttf) and set the path in the optional font file field.
+
+    - By default this automation triggers on the 7th minute of every hour, to change this modify the optional time pattern field.
+
+  domain: automation
+  input:
+    displays:
+      name: E-Paper Displays
+      description: One or more ESLs
+      selector:
+        device:
+          filter:
+            - integration: open_epaper_link
+    optional:
+      name: Optional
+      icon: "mdi:cog"
+      collapsed: true
+      input:
+        font_file:
+          name: Font file
+          description: Font file with path
+          default: ppb.ttf
+          selector:
+            text: {}
+        time_pattern:
+          name: Time Pattern
+          description: When to trigger this automation
+          default: "7"
+          selector:
+            text: {}
+
+trigger:
+  - trigger: time_pattern
+    minutes: !input time_pattern
+
+variables:
+  font_file: !input font_file
+
+action:
+  - action: open_epaper_link.drawcustom
+    alias: Draw Dad Joke
+    target:
+      device_id: !input displays
+    data:
+      background: white
+      rotate: 0
+      payload:
+        - type: icon
+          value: emoticon-lol
+          x: 1
+          "y": 1
+          size: 35
+          color: red
+        - type: icon
+          value: emoticon-confused
+          x: 260
+          "y": 92
+          size: 35
+          color: red
+        - type: text
+          value: "{{state_attr('sensor.api_ninja_dad_jokes','joke') | string }}"
+          font: "{{ font_file }}"
+          x: 32
+          "y": 32
+          size: >-
+            {% set string_len = state_attr('sensor.api_ninja_dad_jokes','joke')
+            | length | int %} {% if string_len <= 50 %}
+              26
+            {% elif string_len <= 60 %}
+              20
+            {% elif string_len <= 100 %}
+              18
+            {% elif string_len <= 150 %}
+              15  
+            {% elif string_len <= 200 %}
+              14
+            {% else %} 
+              12
+            {% endif %}
+          color: black
+          # anchor: lt
+          max_width: 232
+          y_padding: 0
+          spacing: 2

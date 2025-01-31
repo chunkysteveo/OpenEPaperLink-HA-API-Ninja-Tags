@@ -1,0 +1,164 @@
+blueprint:
+  name: API Ninja Tags - Trivia
+  description: >
+    Show a trivia question every hour, with the answer only being revealed after 30 minutes! The answer only reveals on the second half hour of every question.... you have 30 minutes to guess on the hour before the tag updates!
+
+    ### Requirements:
+
+    - The [OpenEpaperLink HA Integration](https://github.com/OpenEPaperLink/Home_Assistant_Integration).
+
+    - An [API Ninjas API Key](https://api-ninjas.com/register). it's free!
+
+    ### Installation:
+
+    - Add the [rest sensor](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/blob/main/ha-configuration.yaml) to your home assistant configuration file and replace `'YOUR_SECRET_KEY_FROM_API_NINJAS'` with your API key (or set it in your secrets file)
+
+    - Reload HA.
+
+    - Select the tag(s) you want to display the Questions on.
+
+    ### Customizing:
+
+    - For a nicer font add [`GothamRnd-Bold.ttf`](https://github.com/chunkysteveo/OpenEPaperLink-HA-API-Ninja-Tags/raw/refs/heads/main/GothamRnd-Bold.ttf) and set the path in the optional font file field.
+
+  domain: automation
+  input:
+    displays:
+      name: E-Paper Displays
+      description: One or more ESLs
+      selector:
+        device:
+          filter:
+            - integration: open_epaper_link
+    optional:
+      name: Optional
+      icon: "mdi:cog"
+      collapsed: true
+      input:
+        font_file:
+          name: Font file
+          description: Font file with path
+          default: ppb.ttf
+          selector:
+            text: {}
+        time_pattern:
+          name: Time Pattern
+          description: When to trigger this automation
+          default: "/30"
+          selector:
+            text: {}
+
+trigger:
+  - trigger: time_pattern
+    minutes: !input time_pattern
+
+variables:
+  font_file: !input font_file
+
+action:
+  - action: open_epaper_link.drawcustom
+    alias: Draw trivia
+    target:
+      device_id: !input displays
+    data:
+      background: white
+      rotate: 0
+      payload:
+        - type: icon
+          value: message-question
+          x: 1
+          "y": 1
+          size: 32
+          color: red
+        - type: text
+          value: >-
+            {% set topic_object = {
+              "artliterature":      "Art & Literature",
+              "language":           "Language",
+              "sciencenature":      "Science & Nature",
+              "general":            "General Knowledge",
+              "fooddrink":          "Food & Drink",
+              "peopleplaces":       "People & Places",
+              "geography":          "Geography",
+              "historyholidays":    "History & Holidays",
+              "entertainment":      "Entertainment",
+              "toysgames":          "Toys & Games",
+              "music":              "Music",
+              "mathematics":        "Mathematics",
+              "religionmythology":  "Religion & Mythology",
+              "sportsleisure":      "Sports & Leisure",
+              "question":           "Question",
+              "":                   "Trivia"
+            } %}  {% set topic_key =
+            state_attr('sensor.api_ninja_trivia','category') | string |
+            default("question") %}  {{topic_object[topic_key]}}
+          font: "{{ font_file }}"
+          x: 35
+          "y": >-
+            {% set cat_len = state_attr('sensor.api_ninja_trivia','question') |
+            length | int %} {{ 1 if cat_len < 16 else 7 | int }}
+          size: >-
+            {% set cat_len = state_attr('sensor.api_ninja_trivia','question') |
+            length | int %} {{ 30 if cat_len < 16 else 23 | int }}
+          color: red
+          # anchor: lt
+          y_padding: 0
+          spacing: 2
+        - type: text
+          value: "{{state_attr('sensor.api_ninja_trivia','question') | string }}"
+          font: "{{ font_file }}"
+          x: 15
+          "y": 38
+          size: >-
+            {% set string_len = state_attr('sensor.api_ninja_trivia','question')
+            | length | int %} {% if string_len <= 50 %}
+              22
+            {% elif string_len <= 60 %}
+              18
+            {% elif string_len <= 100 %}
+              16
+            {% elif string_len <= 150 %}
+              12  
+            {% elif string_len <= 200 %}
+              10
+            {% else %} 
+              8
+            {% endif %}
+          color: black
+          # anchor: lt
+          max_width: 266
+          y_padding: 0
+          spacing: 2
+        - type: text
+          value: |-
+            {% if now().minute < 30 %}
+              ...???
+            {% else %}
+              {{state_attr('sensor.api_ninja_trivia','answer') | string }}
+            {% endif %}
+          font: "{{ font_file }}"
+          x: 5
+          size: |-
+            {% if now().minute < 30 %}
+              28
+            {% else %}
+              {% set string_len = state_attr('sensor.api_ninja_trivia','answer') | length | int %}
+              {% if string_len <= 20 %}
+                28
+              {% elif string_len <= 50 %}
+                20
+              {% elif string_len <= 60 %}
+                18
+              {% elif string_len <= 100 %}
+                16
+              {% elif string_len <= 150 %}
+                12 
+              {% else %} 
+                8
+              {% endif %}
+            {% endif %}
+          color: red
+          # anchor: lt
+          max_width: 291
+          y_padding: 8
+          spacing: 2
